@@ -2,5 +2,5 @@
 </script>
 
 <template>
-  <div class="sequence"></div>
+  <div class="player" />
 </template>
