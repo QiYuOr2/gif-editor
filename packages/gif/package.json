@@ -1,5 +1,5 @@
 {
-  "name": "pkg-placeholder",
+  "name": "@ge/gif",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@10.6.2",
@@ -37,6 +37,10 @@
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"
+  },
+  "dependencies": {
+    "@ffmpeg/core": "catalog:",
+    "@ffmpeg/ffmpeg": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:types",
