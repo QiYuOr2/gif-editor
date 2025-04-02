@@ -2,10 +2,8 @@
   "name": "gif-editor",
   "type": "module",
   "private": true,
-  "scripts": {
-  },
-  "dependencies": {
-  },
+  "scripts": {},
+  "dependencies": {},
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
     "eslint": "catalog:cli",
