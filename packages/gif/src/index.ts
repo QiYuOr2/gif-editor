@@ -1,3 +1,3 @@
-export class GIF {
-  constructor() {}
-}
+import { parseGIF } from 'gifuct-js'
+
+export function readGIF() {}

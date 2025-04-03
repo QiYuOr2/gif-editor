@@ -39,8 +39,7 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
-    "@ffmpeg/core": "catalog:",
-    "@ffmpeg/ffmpeg": "catalog:"
+    "gifuct-js": "catalog:utils"
   },
   "devDependencies": {
     "@types/node": "catalog:types",

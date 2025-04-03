@@ -16,6 +16,7 @@
     "vue-router": "catalog:"
   },
   "devDependencies": {
+    "@iconify-json/mdi": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@unocss/preset-icons": "catalog:",
     "unocss": "catalog:"
