@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Header from './components/Header.vue'
+import EditorHeader from './components/Header.vue'
 import Preview from './components/Preview.vue'
 import Timeline from './components/Timeline.vue'
+import { readGIF } from '@ge/gif'
+import { useFileDialog } from '@vueuse/core'
 
 // 状态管理
 const frames = ref<Array<{
@@ -23,11 +25,21 @@ const currentFrame = computed(() => {
   return frames.value.find(frame => frame.id === selectedFrameId.value) || null
 })
 
-// 操作方法
-const handleImport = () => {
-  console.log('Import clicked')
-  // TODO: 实现导入逻辑
-}
+const { open, onChange } = useFileDialog({
+  accept: '.gif',
+  multiple: false
+})
+
+onChange(async (files) => {
+  if (!files?.length) {
+    return
+  }
+
+  const data = await files[0].arrayBuffer() 
+  const frames = readGIF(data)
+  console.log(frames)
+})
+
 
 const handleExport = () => {
   console.log('Export clicked')
@@ -86,13 +98,13 @@ const zoomOut = () => {
 
 <template>
   <div class="text-gray-900 bg-gray-100 flex flex-col h-screen overflow-hidden">
-    <Header 
-      @import="handleImport"
+    <EditorHeader 
+      :filename="frames.length ? frames[0].src : 'Untitled'"
+      @import="open"
       @export="handleExport"
       @delete-frame="deleteSelectedFrame"
       @undo="undo"
       @redo="redo"
-      @play-pause="togglePlay"
       @add-frame="addFrame"
       @settings="openSettings"
     />

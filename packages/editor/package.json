@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ge/gif": "workspace:*",
+    "@vueuse/core": "catalog:",
     "nuxt": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"

@@ -1,7 +1,13 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
+import { readGIF } from '../src'
 
-describe('should', () => {
-  it('exported', () => {
-    expect(1).toEqual(1)
+describe('gif', () => {
+  it('readGIF', () => {
+    const file = readFileSync('./simple.gif')
+    const data = new Uint8Array(file).buffer
+    const frames = readGIF(data)
+
+    expect(frames).toBeDefined()
   })
 })
