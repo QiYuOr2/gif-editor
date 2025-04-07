@@ -1,3 +1,12 @@
+
+<script setup lang="ts">
+import { useGIFStore } from '~/store/useGIFStore';
+
+const gif = useGIFStore()
+
+const canvasWidth = computed(() => gif.frames.reduce((acc, frame) => acc + frame.dims.width, 0))
+
+</script>
 <template>
   <div
     class="bg-white text-gray-800 pt-3 pb-6 m-4 rounded-6 overflow-hidden shadow-sm border-2 border-gray-200 border-solid">
@@ -26,9 +35,9 @@
         </div>
 
         <div class="flex items-center font-mono text-sm gap-2 ml-6">
-          <div>00:01:11</div>
+          <div>01:11.00</div>
           <span>/</span>
-          <div class="text-gray-400">00:09:32</div>
+          <div class="text-gray-400">09:32.01</div>
         </div>
       </div>
 
@@ -51,40 +60,13 @@
       ></div> -->
 
       <div class="relative flex space-x-1 h-full px-2 items-center">
-        <FrameItem v-for="frame in frames" :key="frame.id" :frame-src="frame.src" :duration="frame.duration"
-          :is-selected="selectedFrameId === frame.id" @select="$emit('selectFrame', frame.id)" />
+        <!-- <FrameItem v-for="frame in frames" :key="frame.id" :frame-src="frame.src" :duration="frame.duration" :is-selected="selectedFrameId === frame.id" @select="$emit('selectFrame', frame.id)" /> -->
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-interface Frame {
-  id: string
-  src: string
-  duration: number
-}
 
-const props = defineProps<{
-  frames: Frame[]
-  selectedFrameId: string
-  currentTime: number
-  totalDuration: number
-}>()
-
-const emit = defineEmits(['selectFrame', 'zoomIn', 'zoomOut'])
-
-const ticks = computed(() => {
-  return Array.from({ length: props.totalDuration + 1 }, (_, i) => i)
-})
-
-const playheadPosition = computed(() => {
-  return (props.currentTime / props.totalDuration) * 100
-})
-
-const zoomIn = () => emit('zoomIn')
-const zoomOut = () => emit('zoomOut')
-</script>
 
 <style scoped>
 .scrollbar::-webkit-scrollbar {

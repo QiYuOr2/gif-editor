@@ -5,10 +5,12 @@ packages:
   - examples/*
 catalog:
   '@iconify-json/mdi': ^1.2.3
+  '@pinia/nuxt': ^0.10.1
   '@unocss/nuxt': 66.1.0-beta.7
   '@unocss/preset-icons': 66.1.0-beta.7
   '@vueuse/core': ^13.0.0
   nuxt: ^3.14.1592
+  pinia: ^3.0.1
   unocss: 66.1.0-beta.7
   vue: ^3.5.13
   vue-router: ^4.5.0

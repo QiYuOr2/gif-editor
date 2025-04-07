@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@ge/gif": "workspace:*",
+    "@pinia/nuxt": "catalog:",
     "@vueuse/core": "catalog:",
     "nuxt": "catalog:",
+    "pinia": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"
   },

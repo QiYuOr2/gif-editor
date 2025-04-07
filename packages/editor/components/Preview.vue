@@ -3,7 +3,8 @@
     <div class="text-center">
       <h1 class="text-3xl font-semibold">GIF 预览区域</h1>
       <!-- 动态显示当前帧 -->
-      <img v-if="currentFrame?.src" :src="currentFrame.src" alt="Current GIF frame" class="max-w-full max-h-full" />
+      <canvas />
+      <!-- <img v-if="currentFrame?.src" :src="currentFrame.src" class="max-w-full max-h-full" /> -->
     </div>
     <!-- 播放时间显示 -->
     <div class="absolute top-4 right-4 bg-black text-gray-100 bg-opacity-60 px-3 py-1 rounded">
