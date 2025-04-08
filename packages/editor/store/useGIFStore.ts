@@ -18,5 +18,7 @@ export const useGIFStore = defineStore('gif', () => {
     frames.value = gif.frames
   }
 
-  return { parse, fileName, fileSize, frames }
+  const onFramesChange = (frames: Frame[]) => {}
+
+  return { parse, fileName, fileSize, frames, onFramesChange }
 })

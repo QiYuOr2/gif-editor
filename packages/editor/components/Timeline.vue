@@ -5,6 +5,8 @@ import { useGIFStore } from '~/store/useGIFStore';
 const gif = useGIFStore()
 
 const canvasWidth = computed(() => gif.frames.reduce((acc, frame) => acc + frame.dims.width, 0))
+const timelineCanvas = ref()
+
 
 </script>
 <template>
@@ -60,6 +62,7 @@ const canvasWidth = computed(() => gif.frames.reduce((acc, frame) => acc + frame
       ></div> -->
 
       <div class="relative flex space-x-1 h-full px-2 items-center">
+        <canvas ref="timelineCanvas"></canvas>
         <!-- <FrameItem v-for="frame in frames" :key="frame.id" :frame-src="frame.src" :duration="frame.duration" :is-selected="selectedFrameId === frame.id" @select="$emit('selectFrame', frame.id)" /> -->
       </div>
     </div>
