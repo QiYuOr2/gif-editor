@@ -39,10 +39,14 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
-    "gifuct-js": "catalog:utils"
+    "gif.js": "catalog:",
+    "gifuct-js": "catalog:utils",
+    "omggif": "catalog:"
   },
   "devDependencies": {
+    "@types/gif.js": "catalog:",
     "@types/node": "catalog:types",
+    "@types/omggif": "catalog:",
     "bumpp": "catalog:cli",
     "eslint": "catalog:cli",
     "tinyexec": "catalog:utils",

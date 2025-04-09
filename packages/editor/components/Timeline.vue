@@ -5,13 +5,37 @@ import { useGIFStore } from '~/store/useGIFStore';
 const gif = useGIFStore()
 
 const canvasWidth = computed(() => gif.frames.reduce((acc, frame) => acc + frame.dims.width, 0))
+const canvasHeight = computed(() => gif.frames.reduce((acc, frame) => Math.max(acc, frame.dims.height), 0))
 const timelineCanvas = ref()
 
+const TARGET_HEIGHT = 82
+gif.onFramesChange((frames) => {
+  timelineCanvas.value.height = TARGET_HEIGHT
+  timelineCanvas.value.width = canvasWidth.value * TARGET_HEIGHT / canvasHeight.value
+  const ctx = timelineCanvas.value.getContext('2d');
 
+  frames.forEach((frame, index) => {
+    const targetWidth = frame.dims.width * TARGET_HEIGHT / frame.dims.height;
+    const imageData = new ImageData(
+      frame.patch,
+      frame.dims.width,
+      frame.dims.height
+    );
+
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d')!;
+    tempCanvas.width = frame.dims.width;
+    tempCanvas.height = frame.dims.height;
+    tempCtx.putImageData(imageData, 0, 0);
+
+
+    ctx.drawImage(tempCanvas, index * targetWidth, 0, targetWidth, TARGET_HEIGHT);
+  });
+})
 </script>
 <template>
   <div
-    class="bg-white text-gray-800 pt-3 pb-6 m-4 rounded-6 overflow-hidden shadow-sm border-2 border-gray-200 border-solid">
+    class="fixed bottom-0 left-0 right-0 bg-white text-gray-800 pt-3 pb-6 m-4 rounded-6 overflow-hidden shadow-sm border-2 border-gray-200 border-solid">
     <div class="flex items-center mb-2">
       <div flex items-center space-x-3 text-gray-300 ml-4>
         <div icon-button text-gray-800>

@@ -40,6 +40,12 @@ catalogs:
     '@pinia/nuxt':
       specifier: ^0.10.1
       version: 0.10.1
+    '@types/gif.js':
+      specifier: ^0.2.5
+      version: 0.2.5
+    '@types/omggif':
+      specifier: ^1.0.5
+      version: 1.0.5
     '@unocss/nuxt':
       specifier: 66.1.0-beta.7
       version: 66.1.0-beta.7
@@ -49,9 +55,15 @@ catalogs:
     '@vueuse/core':
       specifier: ^13.0.0
       version: 13.0.0
+    gif.js:
+      specifier: ^0.2.0
+      version: 0.2.0
     nuxt:
       specifier: ^3.14.1592
       version: 3.16.1
+    omggif:
+      specifier: ^1.0.10
+      version: 1.0.10
     pinia:
       specifier: ^3.0.1
       version: 3.0.1
@@ -142,13 +154,25 @@ importers:
 
   packages/gif:
     dependencies:
+      gif.js:
+        specifier: 'catalog:'
+        version: 0.2.0
       gifuct-js:
         specifier: catalog:utils
         version: 2.1.2
+      omggif:
+        specifier: 'catalog:'
+        version: 1.0.10
     devDependencies:
+      '@types/gif.js':
+        specifier: 'catalog:'
+        version: 0.2.5
       '@types/node':
         specifier: catalog:types
         version: 22.13.13
+      '@types/omggif':
+        specifier: 'catalog:'
+        version: 1.0.5
       bumpp:
         specifier: catalog:cli
         version: 10.1.0(magicast@0.3.5)
@@ -1305,6 +1329,12 @@ packages:
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
 
+  '@types/events@3.0.3':
+    resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
+
+  '@types/gif.js@0.2.5':
+    resolution: {integrity: sha512-OdDQYh9v7td9ztjaooBSqjUBAyAuui2xwDDmQcyRLd6c9T0iWgkebAoCBEdEEBoZG3ekJE/6UnH63Dzq0S3bvw==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1322,6 +1352,9 @@ packages:
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
+
+  '@types/omggif@1.0.5':
+    resolution: {integrity: sha512-gDQJflz1rOgEcUXkMAl80bDGN46f5mp8GbcM5dyvq+zsFV6YRBRtmNxlJJ5mjY77T7BRkRFzdIBVmK90QYhCxA==}
 
   '@types/parse-path@7.0.3':
     resolution: {integrity: sha512-LriObC2+KYZD3FzCrgWGv/qufdUy4eXrxcLgQMfYXgPbLIecKIsVBaQgUPmxSSLcjmYbDTQbMgr6qr6l/eb7Bg==}
@@ -2740,6 +2773,9 @@ packages:
   get-tsconfig@4.10.0:
     resolution: {integrity: sha512-kGzZ3LWWQcGIAmg6iWvXn0ei6WDtV26wzHRMwDSzmAbcXrTEXxHy6IehI6/4eT6VRKyMP1eF1VqwrVUmE/LR7A==}
 
+  gif.js@0.2.0:
+    resolution: {integrity: sha512-bYxCoT8OZKmbxY8RN4qDiYuj4nrQDTzgLRcFVovyona1PTWNePzI4nzOmotnlOFIzTk/ZxAHtv+TfVLiBWj/hw==}
+
   gifuct-js@2.1.2:
     resolution: {integrity: sha512-rI2asw77u0mGgwhV3qA+OEgYqaDn5UNqgs+Bx0FGwSpuqfYn+Ir6RQY5ENNQ8SbIiG/m5gVa7CD5RriO4f4Lsg==}
 
@@ -3522,6 +3558,9 @@ packages:
 
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
+
+  omggif@1.0.10:
+    resolution: {integrity: sha512-LMJTtvgc/nugXj0Vcrrs68Mn2D1r0zf630VNtqtpI1FEO7e+O9FP4gqs9AcnBaSEeoHIPm28u6qgPR0oyEpGSw==}
 
   on-change@5.0.1:
     resolution: {integrity: sha512-n7THCP7RkyReRSLkJb8kUWoNsxUIBxTkIp3JKno+sEz6o/9AJ3w3P9fzQkITEkMwyTKJjZciF3v/pVoouxZZMg==}
@@ -5962,6 +6001,12 @@ snapshots:
 
   '@types/estree@1.0.7': {}
 
+  '@types/events@3.0.3': {}
+
+  '@types/gif.js@0.2.5':
+    dependencies:
+      '@types/events': 3.0.3
+
   '@types/json-schema@7.0.15': {}
 
   '@types/mdast@4.0.4':
@@ -5979,6 +6024,8 @@ snapshots:
       undici-types: 6.20.0
 
   '@types/normalize-package-data@2.4.4': {}
+
+  '@types/omggif@1.0.5': {}
 
   '@types/parse-path@7.0.3': {}
 
@@ -7666,6 +7713,8 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
+  gif.js@0.2.0: {}
+
   gifuct-js@2.1.2:
     dependencies:
       js-binary-schema-parser: 2.0.3
@@ -8779,6 +8828,8 @@ snapshots:
       ufo: 1.5.4
 
   ohash@2.0.11: {}
+
+  omggif@1.0.10: {}
 
   on-change@5.0.1: {}
 

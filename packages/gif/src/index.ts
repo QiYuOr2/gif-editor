@@ -1,12 +1,25 @@
-import { parseGIF, decompressFrames } from 'gifuct-js'
+import { GifReader, type Frame } from 'omggif'
 
-export function readGIF(data: ArrayBuffer) {
-  const frames = decompressFrames(parseGIF(data), true)
+export interface GIFFrame extends Frame {
+  data: Uint8ClampedArray
+}
 
-  const totalDuration = frames.reduce((acc, frame) => {
-    const duration = frame.delay || 0
-    return acc + duration
-  }, 0)
+export function readGIF(arrayBuffer: ArrayBuffer) {
+  const reader = new GifReader(new Uint8Array(arrayBuffer))
+  
+  const frameLength = reader.numFrames()
+  const frames : GIFFrame[] = []
 
-  return { duration: totalDuration, frames }
+  for (let i = 0; i < frameLength; i++) {
+    const info = reader.frameInfo(i)
+    const imageData = new Uint8ClampedArray(info.width * info.height * 4)
+    reader.decodeAndBlitFrameBGRA(i, imageData)
+    
+    frames.push({
+      ...info,
+      data: imageData,
+    })
+  }
+
+  return { count: frameLength, frames }
 }
