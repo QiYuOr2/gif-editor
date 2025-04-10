@@ -17,7 +17,7 @@ const canvasBasicHeight = computed(() => {
   return containerRef.value.clientHeight
 })
 
-function renderFrame(frames: Frame[]) {
+function renderFrame(frames: Frame[], offset = 0) {
   if (!timelineCanvas.value) {
     return
   }
@@ -34,6 +34,7 @@ function renderFrame(frames: Frame[]) {
       height
     );
 
+    // 这部分内容可以预处理，不要每次都创建
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d')!;
     tempCanvas.width = width;
@@ -48,7 +49,7 @@ function renderFrame(frames: Frame[]) {
     const x = targetWidth * (1 - scaleValue.value) * index 
       + canvasBasicWidth.value * scaleValue.value * index / frames.length;
 
-    ctx.drawImage(tempCanvas, x, 0, targetWidth, canvasBasicHeight.value);
+    ctx.drawImage(tempCanvas, offset + x, 0, targetWidth, canvasBasicHeight.value);
   });
 }
 
@@ -63,7 +64,14 @@ const sliderWidth = computed(() => {
 
 const sliderRef = ref<HTMLDivElement>()
 const sliderWrapperRef = ref<HTMLDivElement>()
-const { x } = useDraggable(sliderRef, { axis: 'x' })
+
+const { x } = useDraggable(sliderRef, {
+  axis: 'x',
+  onMove() {
+    renderFrame(gif.frames, -sliderPosition.value)
+  }
+})
+
 const sliderPosition = computed(() => {
   if (!sliderRef.value || !sliderWrapperRef.value) {
     return 0

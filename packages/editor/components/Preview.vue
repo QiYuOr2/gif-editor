@@ -38,7 +38,6 @@ function renderFrame() {
 }
 
 watch(() => gif.currentFrame, () => {
-  console.log(gif.currentFrame)
   if (!previewCanvas.value) {
     return
   }

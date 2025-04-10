@@ -78,6 +78,9 @@ export const useGIFStore = defineStore('gif', () => {
     frames.value = []
     fileSize.value = 0
     fileName.value = ''
+    frameDelay.value = 0
+    duration.value = 0
+    currentTime.value = 0
     events.reset()
   }
 
