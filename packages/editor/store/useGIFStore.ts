@@ -9,13 +9,14 @@ export const useGIFStore = defineStore('gif', () => {
   const fileSize = ref(0)
   const fileName = ref('')
 
+  const frameDelay = ref(0)
   const duration = ref(0)
   const durationDisplay = computed(() => timeDisplay(duration.value))
 
   const currentTime = ref(0)
   const currentTimeDisplay = computed(() => timeDisplay(currentTime.value))
   const currentFrame = computed(() => {
-    const index = Math.floor(currentTime.value / (duration.value / frames.value.length))
+    const index = Math.floor(currentTime.value / frameDelay.value)
     return frames.value[index]
   })
 
@@ -36,6 +37,7 @@ export const useGIFStore = defineStore('gif', () => {
 
     frames.value = gif.frames
     duration.value = gif.duration
+    frameDelay.value = gif.delay
     events.emit(frames.value)
   }
 
@@ -48,31 +50,24 @@ export const useGIFStore = defineStore('gif', () => {
   }
 
   const [isPlaying, toggleIsPlaying] = useToggle(false)
-  const animationId = ref<number>()
 
   function play() {
-    if (animationId.value) {
-      return
-    }
-
     toggleIsPlaying(true)
-    
-    const updateFrame = () => {
-      currentTime.value += 1000 / 60
+
+    const nextFrame = () => {
+      currentTime.value += frameDelay.value
       if (currentTime.value >= duration.value) {
         currentTime.value = 0
       }
-      animationId.value = requestAnimationFrame(updateFrame)
+
+      setTimeout(nextFrame, frameDelay.value)
     }
-    updateFrame()
+
+    nextFrame()
   }
 
   function pause() {
-    if (animationId.value) {
-      toggleIsPlaying(false)
-      cancelAnimationFrame(animationId.value)
-      animationId.value = undefined
-    }
+    toggleIsPlaying(false)
   }
 
   function togglePlayOrPause() {
@@ -96,7 +91,7 @@ export const useGIFStore = defineStore('gif', () => {
     togglePlayOrPause,
     fileName, 
     fileSize,
-    frames, 
+    frames,
     onFramesChange, 
     currentFrame, 
     durationDisplay,

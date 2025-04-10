@@ -10,7 +10,20 @@ function pick<T>(obj: T, keys: Array<keyof T>) {
   ) as Pick<T, keyof T>
 }
 
-export function readGIF(arrayBuffer: ArrayBuffer) {
+interface ReadGIFReturn {
+  count: number
+  frames: GIFFrame[]
+  /**
+   * gif 持续时间，单位为毫秒
+   */
+  duration: number
+  /**
+   * gif 每帧延迟时间，单位为毫秒
+   */
+  delay: number
+}
+
+export function readGIF(arrayBuffer: ArrayBuffer): ReadGIFReturn {
   const reader = new GifReader(new Uint8Array(arrayBuffer))
   
   const frameLength = reader.numFrames()
@@ -56,5 +69,5 @@ export function readGIF(arrayBuffer: ArrayBuffer) {
     duration += info.delay * 10
   }
 
-  return { count: frameLength, frames, duration }
+  return { count: frameLength, frames, duration, delay: frames[0].delay * 10 }
 }
