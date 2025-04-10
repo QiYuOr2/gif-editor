@@ -6,8 +6,8 @@ describe('gif', () => {
   it('readGIF', () => {
     const file = readFileSync('./simple.gif')
     const data = new Uint8Array(file).buffer
-    const frames = readGIF(data)
+    const gif = readGIF(data)
 
-    expect(frames).toBeDefined()
+    expect(gif.count).eq(92)
   })
 })

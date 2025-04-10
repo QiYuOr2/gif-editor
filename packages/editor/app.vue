@@ -56,4 +56,42 @@ body {
   padding: 0;
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 14px;
+    width: 14px;
+    border: 2px solid black;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translateY(calc(-50% + 2px));
+  }
+
+  input[type='range']::-moz-range-thumb {
+    height: 24px;
+    width: 24px;
+    border: 3px solid black;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  input[type='range'] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+  }
+
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #d1d5db;
+    border-radius: 9999px;
+  }
+
+  input[type='range']::-moz-range-track {
+    height: 4px;
+    background: #d1d5db;
+    border-radius: 9999px;
+  }
 </style>

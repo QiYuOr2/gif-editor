@@ -1,42 +1,63 @@
 
 <script setup lang="ts">
-import { useGIFStore } from '~/store/useGIFStore';
+import { useGIFStore, type Frame } from '~/store/useGIFStore';
 
 const gif = useGIFStore()
 
-const canvasWidth = computed(() => gif.frames.reduce((acc, frame) => acc + frame.dims.width, 0))
-const canvasHeight = computed(() => gif.frames.reduce((acc, frame) => Math.max(acc, frame.dims.height), 0))
-const timelineCanvas = ref()
+const containerRef = ref()
+const timelineCanvas = ref<HTMLCanvasElement>()
+const scaleValue = ref(1) // 默认显示所有帧
+const canvasBasicWidth = computed(() => {
+  if (!containerRef.value) return 0
+  return containerRef.value.clientWidth
+})
+const canvasBasicHeight = computed(() => {
+  if (!containerRef.value) return 0
+  return containerRef.value.clientHeight
+})
 
-const TARGET_HEIGHT = 82
-gif.onFramesChange((frames) => {
-  timelineCanvas.value.height = TARGET_HEIGHT
-  timelineCanvas.value.width = canvasWidth.value * TARGET_HEIGHT / canvasHeight.value
-  const ctx = timelineCanvas.value.getContext('2d');
+function renderFrame(frames: Frame[]) {
+  if (!timelineCanvas.value) {
+    return
+  }
+
+  timelineCanvas.value.height = canvasBasicHeight.value
+  timelineCanvas.value.width = canvasBasicWidth.value
+  const ctx = timelineCanvas.value.getContext('2d')!
 
   frames.forEach((frame, index) => {
-    const targetWidth = frame.dims.width * TARGET_HEIGHT / frame.dims.height;
+    const { width, height } = frame
     const imageData = new ImageData(
-      frame.patch,
-      frame.dims.width,
-      frame.dims.height
+      frame.data,
+      width,
+      height
     );
 
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d')!;
-    tempCanvas.width = frame.dims.width;
-    tempCanvas.height = frame.dims.height;
+    tempCanvas.width = width;
+    tempCanvas.height = height;
     tempCtx.putImageData(imageData, 0, 0);
 
+    const targetWidth = width * canvasBasicHeight.value / height;
 
-    ctx.drawImage(tempCanvas, index * targetWidth, 0, targetWidth, TARGET_HEIGHT);
+    // scaleValue = 0 => x = targetWidth
+    // scaleValue = 1 => x = canvasBasicWidth.value * frames.length
+    // 根据 scaleValue & index 线性计算 x
+    const x = targetWidth * (1 - scaleValue.value) * index 
+      + canvasBasicWidth.value * scaleValue.value * index / frames.length;
+
+    ctx.drawImage(tempCanvas, x, 0, targetWidth, canvasBasicHeight.value);
   });
-})
+}
+
+gif.onFramesChange((frames) => renderFrame(frames))
 </script>
 <template>
   <div
     class="fixed bottom-0 left-0 right-0 bg-white text-gray-800 pt-3 pb-6 m-4 rounded-6 overflow-hidden shadow-sm border-2 border-gray-200 border-solid">
     <div class="flex items-center mb-2">
+      <!-- undo / redo -->
       <div flex items-center space-x-3 text-gray-300 ml-4>
         <div icon-button text-gray-800>
           <div class="i-mdi:undo-variant"></div>
@@ -46,6 +67,7 @@ gif.onFramesChange((frames) => {
         </div>
       </div>
 
+      <!-- play / pause -->
       <div class="flex items-center mx-auto">
         <div class="flex items-center gap-3 text-gray-800">
           <div class="icon-button">
@@ -67,45 +89,27 @@ gif.onFramesChange((frames) => {
         </div>
       </div>
 
+      <div mr-6>
+        <input 
+          type="range" 
+          min="0" 
+          max="1" 
+          step="0.01" 
+          v-model="scaleValue"
+          @input="renderFrame(gif.frames)"
+        >
+      </div>
     </div>
 
     <div class="h-6 mb-6 border-y-2 border-y-solid border-gray-100"></div>
 
-    <div
-      class="relative bg-gray-100 rounded-5 h-20 mx-6 overflow-x-auto border-1 border-gray-200 border-solid scrollbar">
-      <!-- <div class="absolute inset-0 flex items-end pointer-events-none">
-        <div class="w-full border-t border-gray-600"></div>
-        <div class="flex justify-between w-full px-2 text-xs text-gray-500">
-          <span v-for="tick in ticks" :key="tick">{{ tick }}s</span>
-        </div>
-      </div> -->
+    <div class="relative bg-gray-100 rounded-5 h-20 mx-6 overflow-x-auto border-1 border-gray-200 border-solid">
 
-      <!-- <div 
-        class="playhead absolute top-0 bottom-0 w-0.5 bg-red-500 z-10"
-        :style="{ left: `${playheadPosition}%` }"
-      ></div> -->
-
-      <div class="relative flex space-x-1 h-full px-2 items-center">
-        <canvas ref="timelineCanvas"></canvas>
-        <!-- <FrameItem v-for="frame in frames" :key="frame.id" :frame-src="frame.src" :duration="frame.duration" :is-selected="selectedFrameId === frame.id" @select="$emit('selectFrame', frame.id)" /> -->
+      <div ref="containerRef" class="relative flex space-x-1 h-full items-center">
+        <canvas ref="timelineCanvas" class="h-full w-full"></canvas>
+        <!-- 滚动条 -->
+        <div class="absolute bottom-0"></div>
       </div>
     </div>
   </div>
 </template>
-
-
-
-<style scoped>
-.scrollbar::-webkit-scrollbar {
-  height: 8px;
-}
-
-.scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-</style>

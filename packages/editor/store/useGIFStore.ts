@@ -10,7 +10,7 @@ export const useGIFStore = defineStore('gif', () => {
 
   const events = useEventBus<Frame[]>('gif')
 
-  const parse = async (file: File) => {
+  async function parse(file: File) {
     fileSize.value = file.size
     fileName.value = file.name
 
@@ -22,7 +22,7 @@ export const useGIFStore = defineStore('gif', () => {
     events.emit(frames.value)
   }
 
-  const onFramesChange = (fn: (frames: Frame[]) => void) => {
+  function onFramesChange(fn: (frames: Frame[]) => void) {
     events.on(fn)
 
     return () => {
@@ -30,8 +30,15 @@ export const useGIFStore = defineStore('gif', () => {
     }
   }
 
-  onUnmounted(() => {
+  function $reset() {
+    frames.value = []
+    fileSize.value = 0
+    fileName.value = ''
     events.reset()
+  }
+
+  onUnmounted(() => {
+    $reset()
   })
 
   return { parse, fileName, fileSize, frames, onFramesChange }
