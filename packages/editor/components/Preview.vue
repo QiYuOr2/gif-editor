@@ -1,39 +1,48 @@
 <template>
-  <main class="flex-grow flex items-center justify-center relative border-2 border-gray-600 shadow-inner">
-    <div class="text-center">
-      <h1 class="text-3xl font-semibold">GIF 预览区域</h1>
-      <!-- 动态显示当前帧 -->
-      <canvas />
-      <!-- <img v-if="currentFrame?.src" :src="currentFrame.src" class="max-w-full max-h-full" /> -->
-    </div>
-    <!-- 播放时间显示 -->
-    <div class="absolute top-4 right-4 bg-black text-gray-100 bg-opacity-60 px-3 py-1 rounded">
-      {{ formatTime(currentTime) }}
-    </div>
+  <main class="flex flex-1 m-4 mb-6 items-center justify-center relative">
+    <canvas ref="previewCanvas" class="max-w-full max-h-full min-h-2/3" />
   </main>
 </template>
 
 <script setup lang="ts">
-interface Frame {
-  id: string
-  src: string
-  duration: number
+import { useGIFStore } from '~/store/useGIFStore';
+
+const gif = useGIFStore()
+
+const previewCanvas = ref<HTMLCanvasElement>()
+
+function renderFrame() {
+  const canvas = previewCanvas.value!
+  const { width, height } = gif.currentFrame
+
+  // 计算高度，以 canvas 宽度为基准，缩放 frame 的宽高，绘制在 canvas 上
+  const scale = canvas.width / width
+  canvas.height = height * scale
+  canvas.width = canvas.width
+  const imageData = new ImageData(
+    gif.currentFrame.data,
+    width,
+    height
+  );
+  const tempCanvas = document.createElement('canvas');
+  const tempCtx = tempCanvas.getContext('2d')!
+  tempCanvas.width = width;
+  tempCanvas.height = height;
+  tempCtx.putImageData(imageData, 0, 0);
+
+  const targetWidth = width * scale
+  const targetHeight = height * scale
+  const ctx = canvas.getContext('2d')!
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.drawImage(tempCanvas, 0, 0, width, height, 0, 0, targetWidth, targetHeight)
 }
 
-defineProps({
-  currentTime: {
-    type: Number,
-    default: 0
-  },
-  currentFrame: {
-    type: Object as () => Frame | null,
-    default: null
+watch(() => gif.currentFrame, () => {
+  console.log(gif.currentFrame)
+  if (!previewCanvas.value) {
+    return
   }
-})
 
-const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60)
-  const secs = Math.floor(seconds % 60)
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-}
+  renderFrame()
+}, { immediate: true })
 </script>

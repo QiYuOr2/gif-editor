@@ -25,6 +25,8 @@ export function readGIF(arrayBuffer: ArrayBuffer) {
     background: new Uint8ClampedArray(width * height * 4).fill(0) // 透明背景
   }
 
+  let duration = 0
+
   for (let i = 0; i < frameLength; i++) {
     const info = reader.frameInfo(i)
     const imageData = new Uint8ClampedArray(width * height * 4)
@@ -50,7 +52,9 @@ export function readGIF(arrayBuffer: ArrayBuffer) {
       ...pick(info, ['width', 'height', 'delay', 'x', 'y']),
       data: imageData,
     })
+
+    duration += info.delay * 10
   }
 
-  return { count: frameLength, frames }
+  return { count: frameLength, frames, duration }
 }

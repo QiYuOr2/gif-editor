@@ -37,11 +37,7 @@ const handleExport = () => {
       @export="handleExport"
     />
     
-    <!-- <Preview 
-      :current-frame="currentFrame"
-      :is-playing="isPlaying"
-      :current-time="currentTime"
-    /> -->
+    <Preview />
   
     <Timeline />
   </div>
