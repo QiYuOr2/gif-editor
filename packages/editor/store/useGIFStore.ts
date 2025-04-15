@@ -3,8 +3,12 @@ import { useEventBus, useToggle } from '@vueuse/core'
 
 export type Frame = ReturnType<typeof readGIF>['frames'][number]
 
+type PlayingEvent = { frame: Frame; currentTime: number; progress: number }
+
 export const useGIFStore = defineStore('gif', () => {
-  const events = useEventBus<Frame[]>('gif')
+  const framesChangeEvents = useEventBus<Frame[]>('gif')
+  const playingEvents = useEventBus<PlayingEvent>('playing')
+
   const frames = ref<Frame[]>([])
   const fileSize = ref(0)
   const fileName = ref('')
@@ -17,8 +21,11 @@ export const useGIFStore = defineStore('gif', () => {
   const currentTimeDisplay = computed(() => timeDisplay(currentTime.value))
   const currentFrame = computed(() => {
     const index = Math.floor(currentTime.value / frameDelay.value)
-    return frames.value[index]
+    return frames.value[Math.max(0, Math.min(index, frames.value.length - 1))]
   })
+  function setCurrentTimeByProgress(percent: number) {
+    currentTime.value = duration.value * percent
+  }
 
   function timeDisplay(time: number) {
     const seconds = Math.floor(time / 1000)
@@ -38,14 +45,14 @@ export const useGIFStore = defineStore('gif', () => {
     frames.value = gif.frames
     duration.value = gif.duration
     frameDelay.value = gif.delay
-    events.emit(frames.value)
+    framesChangeEvents.emit(frames.value)
   }
 
   function onFramesChange(fn: (frames: Frame[]) => void) {
-    events.on(fn)
+    framesChangeEvents.on(fn)
 
     return () => {
-      events.off(fn)
+      framesChangeEvents.off(fn)
     }
   }
 
@@ -60,6 +67,11 @@ export const useGIFStore = defineStore('gif', () => {
       }
 
       currentTime.value += frameDelay.value
+      playingEvents.emit({
+        frame: currentFrame.value,
+        currentTime: currentTime.value,
+        progress: currentTime.value / duration.value
+      })
       if (currentTime.value >= duration.value) {
         currentTime.value = 0
       }
@@ -72,6 +84,14 @@ export const useGIFStore = defineStore('gif', () => {
 
   function pause() {
     toggleIsPlaying(false)
+  }
+
+  function onPlaying(fn: (current: PlayingEvent) => void) {
+    playingEvents.on(fn)
+
+    return () => {
+      playingEvents.off(fn)
+    }
   }
 
   function togglePlayOrPause() {
@@ -92,7 +112,8 @@ export const useGIFStore = defineStore('gif', () => {
     frameDelay.value = 0
     duration.value = 0
     currentTime.value = 0
-    events.reset()
+    framesChangeEvents.reset()
+    playingEvents.reset()
   }
 
   onUnmounted(() => {
@@ -108,8 +129,10 @@ export const useGIFStore = defineStore('gif', () => {
     fileName, 
     fileSize,
     frames,
-    onFramesChange, 
-    currentFrame, 
+    onFramesChange,
+    onPlaying,
+    currentFrame,
+    setCurrentTimeByProgress,
     durationDisplay,
     currentTimeDisplay 
   }

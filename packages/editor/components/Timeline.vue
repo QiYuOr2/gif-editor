@@ -7,7 +7,7 @@ const gif = useGIFStore()
 
 const containerRef = ref()
 const timelineCanvas = ref<HTMLCanvasElement>()
-const scaleValue = ref(1) // 默认显示所有帧
+const scaleValue = ref(0.1)
 const canvasBasicWidth = computed(() => {
   if (!containerRef.value) return 0
   return containerRef.value.clientWidth
@@ -95,7 +95,38 @@ const sliderPosition = computed(() => {
   const newX = Math.max(minX, Math.min(maxX, x.value))
   return newX
 })
+
+const indicatorRef = ref<HTMLDivElement>()
+const indicatorWrapperRef = ref<HTMLDivElement>()
+const { x: indicatorX } = useDraggable(indicatorRef, {
+  axis: 'x',
+  onMove() {
+    if (!indicatorRef.value || !indicatorWrapperRef.value || !sliderWrapperRef.value) {
+      return
+    }
+    const progress = indicatorPosition.value / indicatorWrapperRef.value.clientWidth * scaleValue.value
+    gif.setCurrentTimeByProgress(progress)
+  }
+})
+
+const indicatorPosition = computed(() => {
+  if (!indicatorRef.value || !indicatorWrapperRef.value) {
+    return 0
+  }
+  const maxX = indicatorWrapperRef.value.clientWidth
+  const minX = 0
+  const newX = Math.max(minX, Math.min(maxX, indicatorX.value - indicatorWrapperRef.value.offsetLeft - 20))
+  return newX
+})
+
+gif.onPlaying(({ progress }) => {
+  if (!indicatorRef.value || !indicatorWrapperRef.value) {
+    return
+  }
+  indicatorX.value = progress * (indicatorWrapperRef.value.offsetWidth + 40) / scaleValue.value
+})
 </script>
+
 <template>
   <WithPlaceholder>
     <div
@@ -154,10 +185,13 @@ const sliderPosition = computed(() => {
         ></div>
       </div>
 
-      <div class="relative bg-gray-100 rounded-5 h-20 mx-6 overflow-x-auto border-1 border-gray-200 border-solid">
-
-        <div ref="containerRef" class="relative flex space-x-1 h-full items-center">
-          <canvas ref="timelineCanvas" class="h-full w-full"></canvas>
+      <div ref="indicatorWrapperRef" class="relative mx-[20px]">
+        <!-- 指示线 -->
+        <div ref="indicatorRef" class="absolute h-full w-[2px] bg-red-500 z-50 cursor-pointer" :style="{left: `${indicatorPosition}px`}"></div>
+        <div class="relative bg-gray-100 rounded-5 h-20 overflow-x-auto border-1 border-gray-200 border-solid">
+          <div ref="containerRef" class="relative flex space-x-1 h-full items-center">
+            <canvas ref="timelineCanvas" class="h-full w-full"></canvas>
+          </div>
         </div>
       </div>
     </div>
