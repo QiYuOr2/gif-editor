@@ -15,4 +15,5 @@ echo "pnpm --filter @ge/editor generate"
 pnpm --filter @ge/editor generate
 
 # 移动editor产物到根目录dist 
-rsync -a packages/editor/.output/public ${OUTPUT_DIR}/
+echo "mv .output/public/"
+rsync -a packages/editor/.output/public/ ${OUTPUT_DIR}/
