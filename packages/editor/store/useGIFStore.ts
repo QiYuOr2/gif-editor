@@ -55,6 +55,10 @@ export const useGIFStore = defineStore('gif', () => {
     toggleIsPlaying(true)
 
     const nextFrame = () => {
+      if (!isPlaying.value) {
+        return
+      }
+
       currentTime.value += frameDelay.value
       if (currentTime.value >= duration.value) {
         currentTime.value = 0
@@ -72,6 +76,13 @@ export const useGIFStore = defineStore('gif', () => {
 
   function togglePlayOrPause() {
     isPlaying.value ? pause() : play()
+  }
+
+  function toFirst() {
+    currentTime.value = 0
+  }
+  function toLast() {
+    currentTime.value = duration.value - 1
   }
 
   function $reset() {
@@ -92,6 +103,8 @@ export const useGIFStore = defineStore('gif', () => {
     parse,
     isPlaying,
     togglePlayOrPause,
+    toFirst,
+    toLast,
     fileName, 
     fileSize,
     frames,

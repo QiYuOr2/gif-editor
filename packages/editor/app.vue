@@ -26,7 +26,12 @@ const handleExport = () => {
   console.log('Export clicked')
 }
 
-
+async function loadExample() {
+  const response = await fetch('/simple.gif')
+  const result = await response.blob()
+  const file = new File([result], 'example.gif', { type: 'image/gif' })
+  gif.parse(file)
+}
 </script>
 
 <template>
@@ -35,6 +40,7 @@ const handleExport = () => {
       :filename="gif.fileName || 'Untitled'"
       @import="open"
       @export="handleExport"
+      @example="loadExample"
     />
     
     <Preview />

@@ -17,6 +17,26 @@ const canvasBasicHeight = computed(() => {
   return containerRef.value.clientHeight
 })
 
+const frameCanvasMap = new WeakMap<Frame, HTMLCanvasElement>()
+function preloadFrameCanvas(frames: Frame[]) {
+  frames.forEach((frame) => {
+    const { width, height } = frame
+    const imageData = new ImageData(
+      frame.data,
+      width,
+      height
+    );
+
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d')!;
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    tempCtx.putImageData(imageData, 0, 0);
+
+    frameCanvasMap.set(frame, tempCanvas)
+  });
+}
+
 function renderFrame(frames: Frame[], offset = 0) {
   if (!timelineCanvas.value) {
     return
@@ -26,20 +46,10 @@ function renderFrame(frames: Frame[], offset = 0) {
   timelineCanvas.value.width = canvasBasicWidth.value
   const ctx = timelineCanvas.value.getContext('2d')!
 
-  frames.forEach((frame, index) => {
-    const { width, height } = frame
-    const imageData = new ImageData(
-      frame.data,
-      width,
-      height
-    );
 
-    // 这部分内容可以预处理，不要每次都创建
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d')!;
-    tempCanvas.width = width;
-    tempCanvas.height = height;
-    tempCtx.putImageData(imageData, 0, 0);
+  frames.forEach((frame, index) => {
+    const frameCanvas = frameCanvasMap.get(frame)!
+    const { width, height } = frame
 
     const targetWidth = width * canvasBasicHeight.value / height;
 
@@ -49,11 +59,15 @@ function renderFrame(frames: Frame[], offset = 0) {
     const x = targetWidth * (1 - scaleValue.value) * index 
       + canvasBasicWidth.value * scaleValue.value * index / frames.length;
 
-    ctx.drawImage(tempCanvas, offset + x, 0, targetWidth, canvasBasicHeight.value);
+
+    ctx.drawImage(frameCanvas, offset + x, 0, targetWidth, canvasBasicHeight.value);
   });
 }
 
-gif.onFramesChange((frames) => renderFrame(frames))
+gif.onFramesChange((frames) => {
+  preloadFrameCanvas(frames)
+  renderFrame(frames)
+})
 
 const sliderWidth = computed(() => {
   const progress = scaleValue.value * 100
@@ -100,14 +114,14 @@ const sliderPosition = computed(() => {
         <!-- play / pause -->
         <div class="flex items-center mx-auto">
           <div class="flex items-center gap-3 text-gray-800">
-            <div class="icon-button">
+            <div class="icon-button" @click="gif.toFirst">
               <div class="i-mdi:skip-previous-outline"></div>
             </div>
             <div class="icon-button" @click="gif.togglePlayOrPause">
               <div v-if="!gif.isPlaying" class="i-mdi:play"></div>
               <div v-else class="i-mdi:pause"></div>
             </div>
-            <div class="icon-button">
+            <div class="icon-button" @click="gif.toLast">
               <div class="i-mdi:skip-next-outline"></div>
             </div>
           </div>

@@ -6,14 +6,13 @@ defineProps<{
 const emit = defineEmits<{
   (event: 'import'): void
   (event: 'export'): void
-  (event: 'delete'): void
-  (event: 'undo'): void
-  (event: 'redo'): void
-  (event: 'addFrame'): void
+  (event: 'example'): void
+  
 }>()
 
 const onImport = () => emit('import')
 const onExport = () => emit('export')
+const onExample = () => emit('example')
 </script>
 
 
@@ -23,17 +22,14 @@ const onExport = () => emit('export')
     <div>{{ filename }}</div>
 
     <div class="flex items-center space-x-4">
+      <div class="border-light-900 border-solid rounded text-xs px-2 py-1 cursor-pointer hover:bg-light-900 transition-colors duration-200" @click="onExample">载入示例</div>
       <div icon-button @click="onImport">
         <div class="i-mdi:file-plus-outline"></div>
       </div>
       <div icon-button @click="onExport">
         <div class="i-mdi:download"></div>
       </div>
-   
     </div>
-
-
-
   </header>
 </template>
 
