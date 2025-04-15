@@ -1,13 +1,13 @@
 
 <script setup lang="ts">
-import { useDraggable } from '@vueuse/core'
+import { useDraggable, useStorage } from '@vueuse/core'
 import { useGIFStore, type Frame } from '~/store/useGIFStore';
 
 const gif = useGIFStore()
 
 const containerRef = ref()
 const timelineCanvas = ref<HTMLCanvasElement>()
-const scaleValue = ref(0.1)
+const scaleValue = useStorage('@ge/editor-scaleValue', 0.1)
 const canvasBasicWidth = computed(() => {
   if (!containerRef.value) return 0
   return containerRef.value.clientWidth

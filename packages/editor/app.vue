@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import EditorHeader from './components/Header.vue'
 import Preview from './components/Preview.vue'
 import Timeline from './components/Timeline.vue'
@@ -36,16 +35,18 @@ async function loadExample() {
 
 <template>
   <div class="text-gray-900 bg-gray-100 flex flex-col h-screen overflow-hidden">
-    <EditorHeader 
-      :filename="gif.fileName || 'Untitled'"
-      @import="open"
-      @export="handleExport"
-      @example="loadExample"
-    />
+    <ClientOnly>
+      <EditorHeader 
+        :filename="gif.fileName || 'Untitled'"
+        @import="open"
+        @export="handleExport"
+        @example="loadExample"
+      />
+      
+      <Preview />
     
-    <Preview />
-  
-    <Timeline />
+      <Timeline />
+    </ClientOnly>
   </div>
 </template>
 
