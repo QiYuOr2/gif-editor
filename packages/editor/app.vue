@@ -26,7 +26,7 @@ const handleExport = () => {
 }
 
 async function loadExample() {
-  const response = await fetch('/simple.gif')
+  const response = await fetch('/gif-editor/simple.gif')
   const result = await response.blob()
   const file = new File([result], 'example.gif', { type: 'image/gif' })
   gif.parse(file)
