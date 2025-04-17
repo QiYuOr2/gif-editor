@@ -41,12 +41,14 @@
   "dependencies": {
     "gif.js": "catalog:",
     "gifuct-js": "catalog:utils",
-    "omggif": "catalog:"
+    "omggif": "catalog:",
+    "quantize": "catalog:"
   },
   "devDependencies": {
     "@types/gif.js": "catalog:",
     "@types/node": "catalog:types",
     "@types/omggif": "catalog:",
+    "@types/quantize": "catalog:",
     "bumpp": "catalog:cli",
     "eslint": "catalog:cli",
     "tinyexec": "catalog:utils",

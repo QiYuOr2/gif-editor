@@ -4,6 +4,9 @@
 export default defineNuxtConfig({
   app: {
     baseURL: '/gif-editor/',
+    head: {
+      title: 'GIF 编辑器 ｜ @柒宇',
+    },
   },
   modules: [
     '@unocss/nuxt',

@@ -9,6 +9,7 @@ catalog:
   '@rollup/rollup-win32-x64-msvc': ^4.40.0
   '@types/gif.js': ^0.2.5
   '@types/omggif': ^1.0.5
+  '@types/quantize': ^1.0.2
   '@unocss/nuxt': 66.1.0-beta.7
   '@unocss/preset-icons': 66.1.0-beta.7
   '@vueuse/core': ^13.0.0
@@ -16,6 +17,7 @@ catalog:
   nuxt: ^3.14.1592
   omggif: ^1.0.10
   pinia: ^3.0.1
+  quantize: ^1.0.2
   unocss: 66.1.0-beta.7
   vue: ^3.5.13
   vue-router: ^4.5.0
@@ -42,3 +44,5 @@ catalogs:
 onlyBuiltDependencies:
   - esbuild
   - simple-git-hooks
+patchedDependencies:
+  quantize: patches/quantize.patch

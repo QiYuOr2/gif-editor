@@ -5,7 +5,6 @@
   "scripts": {
     "build": "sh scripts/build.sh"
   },
-  "dependencies": {},
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
     "eslint": "catalog:cli",

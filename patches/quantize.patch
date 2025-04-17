@@ -1,0 +1,15 @@
+diff --git a/quantize.js b/quantize.js
+index 731d188958be15e79941850a8e987979fa10144a..d166e6b6b9d833f7f61f8375b3cf8f8412ddf356 100644
+--- a/quantize.js
++++ b/quantize.js
+@@ -188,8 +188,8 @@ var MMCQ = (function() {
+         contains: function(pixel) {
+             var vbox = this,
+                 rval = pixel[0] >> rshift;
+-            gval = pixel[1] >> rshift;
+-            bval = pixel[2] >> rshift;
++            var gval = pixel[1] >> rshift;
++            var bval = pixel[2] >> rshift;
+             return (rval >= vbox.r1 && rval <= vbox.r2 &&
+                 gval >= vbox.g1 && gval <= vbox.g2 &&
+                 bval >= vbox.b1 && bval <= vbox.b2);

@@ -4,7 +4,7 @@ import Preview from './components/Preview.vue'
 import Timeline from './components/Timeline.vue'
 import { useFileDialog } from '@vueuse/core'
 import { useGIFStore } from './store/useGIFStore'
-import { saveGIF } from '@ge/gif'
+import { writeGIF } from '@ge/gif'
 
 const gif = useGIFStore()
 
@@ -24,7 +24,7 @@ onChange(async (files) => {
 
 const handleExport = () => {
   console.log('Export clicked')
-  const buffer = saveGIF(gif.frames, gif.frames[0].delay)
+  const buffer = writeGIF(gif.frames)
   const blob = new Blob([buffer], { type: 'image/gif' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')

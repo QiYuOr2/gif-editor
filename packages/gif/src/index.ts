@@ -1,4 +1,5 @@
 import { GifReader, GifWriter, type Frame } from 'omggif'
+import quantize from 'quantize'
 
 export interface GIFFrame extends Pick<Frame, 'width' | 'height' | 'delay' | 'x' | 'y'> {
   data: Uint8ClampedArray
@@ -72,43 +73,56 @@ export function readGIF(arrayBuffer: ArrayBuffer): ReadGIFReturn {
   return { count: frameLength, frames, duration, delay: frames[0].delay * 10 }
 }
 
-export function saveGIF(frames: GIFFrame[], delay?: number): ArrayBuffer {
-  if (frames.length === 0) {
-    throw new Error('No frames to save')
-  }
+function toPowerOfTwoPalette(paletteRGB: [number, number, number][]) {
+  let numColors = paletteRGB.length
+  let target = 2
+  while (target < numColors) target *= 2
+  if (target > 256) target = 256
 
-  const width = frames[0].width
-  const height = frames[0].height
-
-  const bufferLength = frames.reduce((acc, frame) => acc + frame.width * frame.height * 4, 0)
-  
-  // 创建一个足够大的buffer来存储GIF数据
-  const buffer = new Uint8Array(bufferLength)
-  
-  // 创建GIF写入器
-  const writer = new GifWriter(buffer, width, height, { loop: 0 })
-  
-  // 写入每一帧
-  for (const element of frames) {
-    const frame = element
-    const frameDelay = delay !== undefined ? delay / 10 : frame.delay
-    
-    writer.addFrame(
-      frame.x,
-      frame.y,
-      frame.width,
-      frame.height,
-      Array.from(frame.data),
-      {
-        delay: frameDelay,
-        disposal: 2,
-      }
-    )
+  const safePalette = paletteRGB.slice(0, target)
+  while (safePalette.length < target) {
+    safePalette.push([0, 0, 0]) // 填补黑色
   }
   
-  const actualLength = writer.end()
-  
-  const result = buffer.slice(0, actualLength).buffer
-  
-  return result
+  return safePalette
+}
+
+export function writeGIF(frames: GIFFrame[]): ArrayBuffer {
+  const { width, height } = frames[0]
+  const buffer = new Uint8Array(width * height * 4)
+  const gif = new GifWriter(buffer, width, height, { loop: 0 })
+
+  for (const frame of frames) {
+    const rgba = frame.data
+
+    const pixels: [number, number, number][] = []
+    for (let i = 0; i < rgba.length; i += 4) {
+      pixels.push([rgba[i], rgba[i + 1], rgba[i + 2]])
+    }
+
+    // 使用 quantize 生成 256 色调色板
+    const cmap = quantize(pixels, 256)
+    if (typeof cmap === 'boolean' && !cmap) {
+      throw new Error('颜色量化错误')
+    }
+
+    const paletteRGB = cmap.palette()
+    const palette = toPowerOfTwoPalette(paletteRGB)
+
+    // 将每个像素匹配调色板中的索引
+    const indexedPixels = []
+    for (let i = 0; i < pixels.length; i++) {
+      indexedPixels[i] = cmap.map(pixels[i])
+    }
+
+
+    gif.addFrame(0, 0, width, height, indexedPixels.flat(), {
+      palette: palette as any,
+      delay: Math.round(frame.delay / 10)
+    })
+  }
+
+  const gifData = buffer.slice(0, gif.end())
+
+  return gifData.buffer
 }
