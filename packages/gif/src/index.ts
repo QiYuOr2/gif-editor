@@ -1,4 +1,4 @@
-import { GifReader, type Frame } from 'omggif'
+import { GifReader, GifWriter, type Frame } from 'omggif'
 
 export interface GIFFrame extends Pick<Frame, 'width' | 'height' | 'delay' | 'x' | 'y'> {
   data: Uint8ClampedArray
@@ -70,4 +70,45 @@ export function readGIF(arrayBuffer: ArrayBuffer): ReadGIFReturn {
   }
 
   return { count: frameLength, frames, duration, delay: frames[0].delay * 10 }
+}
+
+export function saveGIF(frames: GIFFrame[], delay?: number): ArrayBuffer {
+  if (frames.length === 0) {
+    throw new Error('No frames to save')
+  }
+
+  const width = frames[0].width
+  const height = frames[0].height
+
+  const bufferLength = frames.reduce((acc, frame) => acc + frame.width * frame.height * 4, 0)
+  
+  // 创建一个足够大的buffer来存储GIF数据
+  const buffer = new Uint8Array(bufferLength)
+  
+  // 创建GIF写入器
+  const writer = new GifWriter(buffer, width, height, { loop: 0 })
+  
+  // 写入每一帧
+  for (const element of frames) {
+    const frame = element
+    const frameDelay = delay !== undefined ? delay / 10 : frame.delay
+    
+    writer.addFrame(
+      frame.x,
+      frame.y,
+      frame.width,
+      frame.height,
+      Array.from(frame.data),
+      {
+        delay: frameDelay,
+        disposal: 2,
+      }
+    )
+  }
+  
+  const actualLength = writer.end()
+  
+  const result = buffer.slice(0, actualLength).buffer
+  
+  return result
 }
